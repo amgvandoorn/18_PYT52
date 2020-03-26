@@ -7,4 +7,4 @@ editor_options:
   chunk_output_type: console
 ---
 
-Describe your project.
+My name is Anna Magdalena van Doorn. I am a research scientist at the International Institute of Tropical Agriculture, based in Ibadan Nigeria. My tasks are to develop high throughput phenotyping tools for the non-destructive measuring of cassava field trials. For my analysis I use R, and the code and input files I share through this medium. 
