@@ -1,0 +1,27 @@
+---
+title: "200323_PYT52_1819"
+author: "Anna Magdalena"
+date: "3/23/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=F)
+```
+
+## Read in
+```{r}
+library(readr)
+H_A_Data <- read_delim("data/18.CASS.PYT.52.IB_Harvest_Aerial.csv", 
+     ";", escape_double = FALSE, trim_ws = TRUE, 
+     skip = 1)
+head(H_A_Data)
+```
+
+## Clusters
+Subset the data for root weight, root shape and root size. Remove >20% root rot.
+```{r}
+require(dplyr)
+require(tm)
+```
+
