@@ -5,6 +5,10 @@ navbar:
   left:
   - text: Home
     href: index.html
+  - text: Radar clone selection
+    href: 200324_RADAR_select_clones.html
+  - text: Models PYT52 data
+    href: 200323_Model_data.html
   - text: About
     href: about.html
   - text: License
