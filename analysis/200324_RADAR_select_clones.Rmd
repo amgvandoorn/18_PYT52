@@ -12,7 +12,7 @@ require (tm)
 require(plyr)
 require(cluster)
 require(readr)
-
+require(here)
 completeFun=function(data, desiredCols){ 
   completeVec=complete.cases(data[, desiredCols])
   return(data[completeVec,])
@@ -57,33 +57,27 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
 }
 ```
 
+
 ## Prepare dataset
 
-From the complete PYT52 2018/2019 dataset, we select root weight, which is fresh weight, root number and root rot number. Root size was only classed into three groups, root shape had all the same number of 2. With the root rot and root number values the root rot percentage was calculated and those clones with root rot with over 20% were excluded from the analysis (this also included TMEB419).
+From the complete PYT52 2018/2019 dataset, we select root weight, which is fresh weight, and root number. 
 
 ```{r  warning=FALSE, message=FALSE}
-
-H_A_Data <- read_delim("data/18.CASS.PYT.52.IB_Harvest_Aerial.csv", 
-     ";", escape_double = FALSE, trim_ws = TRUE, 
-     skip = 1)
-root_data=dplyr::select(H_A_Data,clone=accession_name, rtno, rtrot, rtwt, rtsz, rtshp)
-root_data=completeFun(root_data, c("clone", "rtno", "rtrot", "rtwt", "rtsz", "rtshp"))
-root_data$rtrt=with(root_data, rtrot/rtno)
+H_A_Data <- readr::read_delim(here("data/18.CASS.PYT.52.IB_Harvest_Aerial.csv"), 
+    ";", escape_double = FALSE, trim_ws = TRUE, 
+    skip = 1)
+shape=read.csv(here("data/average_shape_new.csv"))
+root_data=dplyr::select(H_A_Data,clone=accession_name,rtwt, rtno)
+root_data=completeFun(root_data, c("clone", "rtwt", "rtno"))
 head(root_data)
 
 ```
 
-Check the levels used for root shape and size.
 
-```{r}
-unique(root_data$rtsz)
-unique(root_data$rtshp)
-```
-These traits will not be used in further analysis. Only root weight and root number are used for the clustering. Root rot percentage is used to select those with less than 20% root rot. 
 
 ```{r, warning=F}
-trait=c("rtwt", "rtno", "rtrt")
-for(i in 1:4){
+trait=c("rtwt", "rtno")
+for(i in 1:2){
   temp.sum=summarySE(data=root_data, measurevar = paste(trait[i]),
                      groupvars = "clone")
   colnames(temp.sum)=c("clone", "N", paste(trait[i]), "sd", "se", "ci")
@@ -96,19 +90,16 @@ head(smmr.rtwt)
 ```
 Construct the dataframe for clustering
 ```{r}
-clus1=data.frame(rtwt=smmr.rtwt[3], rtrt=smmr.rtrt[3], rtno=smmr.rtno[3])
-#clus1=clus1[clus1$rtrt<0.2,]
+clus1=data.frame(rtwt=smmr.rtwt[3], rtno=smmr.rtno[3])
 ```
 The dataframe needs to contain scaled values to do the clustering.
 ```{r}
 clus2=scale(data.frame(rtwt=clus1$rtwt, rtno=clus1$rtno))
 
-#names=smmr.rtrt[1:3][smmr.rtrt$rtrt<0.2,]
-names=smmr.rtrt[1]
+names=smmr.rtwt[1]
 clus3=data.frame(clone=names$clone, clus1, clus2)
 
-lev=clus3$clone
-rownames(clus2)=lev
+rownames(clus2)=names$clone
 head(clus2)
 ```
 

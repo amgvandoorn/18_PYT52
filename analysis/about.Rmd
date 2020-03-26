@@ -7,4 +7,4 @@ editor_options:
   chunk_output_type: console
 ---
 
-My name is Anna Magdalena van Doorn. I am a research scientist at the International Institute of Tropical Agriculture, based in Ibadan Nigeria. My tasks are to develop high throughput phenotyping tools for the non-destructive measuring of cassava field trials. For my analysis I use R, and the code and input files I share through this medium. 
+This project is a collaboration between Nextgen Cassava and the Cassava Source Sink Project (CASS). The analyses communicated through this medium are done on data from a breeding trial consisting of 52 clones. This trial was planted in June 2018, and harvested in June 2019. Data include genomic information, agronomic data and aerial data collected with an Unmanned Aerial Vehicle. Samples were also collected for lab analysis of metabolic profiles, proteins and starch traits. These traits will eventually be included in the analysis so the full dataset is available to unravel the key components that define root yield and dry matter content. 
