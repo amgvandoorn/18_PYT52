@@ -1,0 +1,154 @@
+---
+title: "Clone clustering for RADAR selection"
+author: "Anna Magdalena"
+date: "3/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(dplyr)
+require (tm)
+require(plyr)
+require(cluster)
+require(readr)
+
+completeFun=function(data, desiredCols){ 
+  completeVec=complete.cases(data[, desiredCols])
+  return(data[completeVec,])
+  }
+
+detach("package:dplyr", unload=TRUE)
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column   
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval:
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+```
+
+## Prepare dataset
+
+From the complete PYT52 2018/2019 dataset, we select root weight, which is fresh weight, root number and root rot number. Root size was only classed into three groups, root shape had all the same number of 2. With the root rot and root number values the root rot percentage was calculated and those clones with root rot with over 20% were excluded from the analysis (this also included TMEB419).
+
+```{r  warning=FALSE, message=FALSE}
+
+H_A_Data <- read_delim("data/18.CASS.PYT.52.IB_Harvest_Aerial.csv", 
+     ";", escape_double = FALSE, trim_ws = TRUE, 
+     skip = 1)
+root_data=dplyr::select(H_A_Data,clone=accession_name, rtno, rtrot, rtwt, rtsz, rtshp)
+root_data=completeFun(root_data, c("clone", "rtno", "rtrot", "rtwt", "rtsz", "rtshp"))
+root_data$rtrt=with(root_data, rtrot/rtno)
+head(root_data)
+
+```
+
+Check the levels used for root shape and size.
+
+```{r}
+unique(root_data$rtsz)
+unique(root_data$rtshp)
+```
+These traits will not be used in further analysis. Only root weight and root number are used for the clustering. Root rot percentage is used to select those with less than 20% root rot. 
+
+```{r, warning=F}
+trait=c("rtwt", "rtno", "rtrt")
+for(i in 1:4){
+  temp.sum=summarySE(data=root_data, measurevar = paste(trait[i]),
+                     groupvars = "clone")
+  colnames(temp.sum)=c("clone", "N", paste(trait[i]), "sd", "se", "ci")
+  temp.sum=completeFun(temp.sum, c("clone", "N", paste(trait[i]), "sd", "se", "ci"))
+  row.names(temp.sum)=NULL
+  assign(paste("smmr.", trait[i], sep=""), temp.sum)
+}
+
+head(smmr.rtwt)
+```
+Construct the dataframe for clustering
+```{r}
+clus1=data.frame(rtwt=smmr.rtwt[3], rtrt=smmr.rtrt[3], rtno=smmr.rtno[3])
+#clus1=clus1[clus1$rtrt<0.2,]
+```
+The dataframe needs to contain scaled values to do the clustering.
+```{r}
+clus2=scale(data.frame(rtwt=clus1$rtwt, rtno=clus1$rtno))
+
+#names=smmr.rtrt[1:3][smmr.rtrt$rtrt<0.2,]
+names=smmr.rtrt[1]
+clus3=data.frame(clone=names$clone, clus1, clus2)
+
+lev=clus3$clone
+rownames(clus2)=lev
+head(clus2)
+```
+
+Fit the k-means cluster, we use 5 clusters
+
+```{r}
+fit=kmeans(clus2, 5)
+clus4=data.frame(clus3, fit$cluster)
+head(clus4)
+
+```
+Write the dataframe to a .csv file
+```{r}
+clus5=clus4
+is.num <- sapply(clus5, is.numeric)
+clus5[is.num] <- lapply(clus5[is.num], round, 3)
+#write.csv(file="200324_root_clusters.csv", x=clus5)
+```
+
+## Cluster plot
+
+```{r , echo=FALSE}
+clusplot(clus2, fit$cluster, color=T, shade=T, labels=2, lines=0, main="Clustering PYT52")
+
+```
+
+## Hierarchical clustering
+
+We use a Euclidean distance matrix as an input for the clustering algorithm. Ward's minimum variance criterion minimizes the total within-cluster variance. 
+
+```{r}
+d=dist(clus2, method="euclidean")
+H.fit=hclust(d, method="ward.D2")
+```
+Plot results in a dendrogram
+
+```{r}
+plot(H.fit)
+groups=cutree(H.fit, k=5)
+rect.hclust(H.fit, k=5, border="red") 
+clus6=data.frame(clus3, H.fit$order)
+```
+
