@@ -8,9 +8,5 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+Welcome to the CASS Nextgen project website. The basis of this website is to communicate the data analysis steps of our published data, and share our data as a source for training purposes. 
 
-Click on this [link](first-analysis.html) to see my results.
-
-[RADAR](200324_RADAR_select_clones.html)
-[Model data](200323_Model_data.html)
