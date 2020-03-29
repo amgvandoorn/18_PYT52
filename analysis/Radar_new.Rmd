@@ -97,7 +97,7 @@ arch=completeFun(dplyr::left_join(shape, branch_m, by='clone'), "sh")
 with(arch, plot(bh, sh, xlab='Branching height (cm)', ylab='Shape'))
 ```
 
-```{r arch, message=FALSE, warning=FALSE, cache=FALSE}
+```{r arch, message=FALSE, warning=FALSE}
 # Make three clusters based on branching height and shape
 
 # Scaled values
