@@ -10,7 +10,7 @@ df_print: paged
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE,crows.print=19 }
 knitr::opts_chunk$set(echo = TRUE, rows.print=19)
-knitr::opts_chunk$set(cache=FALSE)
+
 require(dplyr)
 require (tm)
 require(plyr)
@@ -111,7 +111,7 @@ arch$fit.arch=fit_arch$cluster
 clusplot(clus1, fit_arch$cluster, color=T, shade=T, labels=2, lines=0, main="Clustering architecture traits")
 ```
 
-From this result we select cluster number 3 which contains the clones with the best combination of umbrella shape and high first branching height. 
+From this result we select cluster number 2 which contains the clones with the best combination of umbrella shape and high first branching height. 
 
 ## Root clusters
 
