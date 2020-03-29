@@ -1,0 +1,168 @@
+---
+title: "Clone clustering for RADAR selection"
+author: "Anna Magdalena"
+date: "3/24/2020"
+output:
+  pdf_document: default
+  html_document: default
+df_print: paged
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE,crows.print=19 }
+knitr::opts_chunk$set(echo = TRUE, rows.print=19)
+knitr::opts_chunk$set(cache=FALSE)
+require(dplyr)
+require (tm)
+require(plyr)
+require(cluster)
+require(readr)
+require(here)
+require(corrplot)
+require(ggplot2)
+
+completeFun=function(data, desiredCols){ 
+  completeVec=complete.cases(data[, desiredCols])
+  return(data[completeVec,])
+  }
+
+detach("package:dplyr", unload=TRUE)
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column   
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval:
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+```
+
+For this RADAR project we are planting trials in 3 locations with 5 different clones with a range of root sizes and yield. To select these 5 clones we need to look at aboveground plant architecture. To be able to walk through the plots with the scanner, we need clones with an umbrella shape and high first branching height. 
+
+The approach is to first cluster the available genotypes into 3 clusters based on shape (sh) and branching height (bh). Form this we select the cluster with clones close to umbrella (category 3) and high branching height. This data comes from historical data files.
+
+Then we cluster the clones into 5 clusters based on root fresh yield and size. These trait values we take from the PYT52 2018/2019 harvest data. To ensure we have a selection spanning the whole range we select one clone from each cluster, provided they are in the umbrella+high branching cluster.
+
+## Plant architecture 
+For the plant architechture we have two files that are based on several years of data collection. The first file contains a shape (sh) classification 1-4, where 1= Compact; 2= Open; 3=Umbrella and 4= Cylindrical.
+
+The second file contains data on branching height (bh). This is mostly scored in cm, but in some area's and years this was visually classed from 1-6. The visual scoring is removed, and only branching height in cm is used. Then we select genotypes that are close to a shape of 3, with high branching height. 
+
+```{r hist,  warning=FALSE, message=FALSE}
+
+# import historical data for shape and branching 
+shape=read.csv(here("data/average_shape.csv"))[,c(1,4)]
+colnames(shape)=c("clone", "sh")
+shape=completeFun(shape, "sh")
+
+branch=read.csv(here("data/phenotype_Branching_data.csv"))[c(4,11)]
+colnames(branch)=c('clone', 'bh')
+
+#remove branching height below 7. Most recorded data is in cm, some are classed from 1-6. 
+branch=branch[branch$bh>6,]
+
+#The shape data is already averaged over years and locations, the branching height data is not. 
+branch_m=aggregate(branch[,2], list(branch$clone),mean)
+colnames(branch_m)=c("clone", "bh")
+
+# merge branching data with shape data into an architecture data frame
+arch=completeFun(dplyr::left_join(shape, branch_m, by='clone'), "sh")
+with(arch, plot(bh, sh, xlab='Branching height (cm)', ylab='Shape'))
+```
+
+```{r arch, message=FALSE, warning=FALSE, cache=FALSE}
+# Make three clusters based on branching height and shape
+
+# Scaled values
+clus1=scale(dplyr::select(arch,-clone))
+rownames(clus1)=arch$clone
+
+# Fit the k-means function with 5 clusters
+fit_arch=kmeans(clus1, 3)
+arch$fit.arch=fit_arch$cluster
+
+clusplot(clus1, fit_arch$cluster, color=T, shade=T, labels=2, lines=0, main="Clustering architecture traits")
+```
+
+From this result we select cluster number 3 which contains the clones with the best combination of umbrella shape and high first branching height. 
+
+## Root clusters
+
+From the complete PYT52 2018/2019 dataset, we select root weight (rtwt), which is fresh weight, and root number (rtno) and root size (rtsz). 
+
+```{r root, warning=FALSE, message=FALSE}
+#import 18/19 data file
+data18 =  read.csv(here("data/18.CASS.PYT.52.IB_Harvest_Aerial.csv"),skip = 1)
+data18_m=aggregate(data18[, 18:98], list(data18$accession_name), mean, na.rm=FALSE)
+data18_m=completeFun(data18_m, "rtsz")
+colnames(data18_m)[1] ="clone"
+
+with(data18_m, plot(rtwt, rtno, xlab="Root weight (kg per plot)", ylab= "Root count"))
+print(with(data18_m, cor(rtwt, rtno)))
+
+# Because root weight correlates to well with root number, it does not anything to a clustering on weight alone. Therefore we also look at root size.
+
+ggplot(data18_m, aes(x=rtwt, y=rtno, colour=rtsz))+
+  geom_point()+
+  labs(x="Root weight (kg per plot)", y= "Root count", colour="Root size")
+
+print(with(data18_m, cor(rtwt, rtsz)))
+
+```
+
+We see that the root number and total plot weight are strongly related, but there is more variation in the root size. Hence, for the clustering we will take root size and root weight. 
+```{r rclus, warning=FALSE, message=FALSE, rows.print=19}
+
+clus2=scale(data.frame(rtwt=data18_m$rtwt, rtsz=data18_m$rtsz))
+rownames(clus2)=data18_m$clone
+
+# Fit the k-means function with 5 clusters
+fit_r=kmeans(clus2, 5)
+
+clusplot(clus2, fit_r$cluster, color=T, shade=T, labels=2, lines=0, main="Clustering root traits")
+
+```
+
+## Combine root clusters with cluster 2 of the architecture data
+
+```{r result, warning=FALSE, message=FALSE, rows.print=19}
+root=data.frame(dplyr::select(data18_m, clone, rtwt, rtsz), fit_r$cluster)
+
+arch_select=dplyr::select(arch[arch$fit.arch==2,], -fit.arch)
+select=dplyr::left_join(arch_select, root, by="clone")
+select=select[order(select$fit_r.cluster),]
+rownames(select)=NULL
+
+#Select one clone from each of the fit_r.cluster column categories
+select
+```
+
+
+
