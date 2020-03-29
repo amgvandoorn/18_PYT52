@@ -362,7 +362,7 @@ div.tocify {
   <a href="index.html">Home</a>
 </li>
 <li>
-  <a href="200324_RADAR_select_clones.html">Radar clone selection</a>
+  <a href="Radar_new.html">Radar clone selection</a>
 </li>
 <li>
   <a href="200323_Model_data.html">Models PYT52 data</a>
@@ -418,7 +418,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-03-26
+<strong>Last updated:</strong> 2020-03-29
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -509,31 +509,49 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomamgvandoorn18PYT52tree0ff27dc135b99da6c7691f4ac33d235745898f8btargetblank0ff27dca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/amgvandoorn/18_PYT52/tree/0ff27dc135b99da6c7691f4ac33d235745898f8b" target="_blank">0ff27dc</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomamgvandoorn18PYT52tree17c127cbe7d8db332aaf4627761907fde9afdd0etargetblank17c127ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/amgvandoorn/18_PYT52/tree/17c127cbe7d8db332aaf4627761907fde9afdd0e" target="_blank">17c127c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomamgvandoorn18PYT52tree0ff27dc135b99da6c7691f4ac33d235745898f8btargetblank0ff27dca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomamgvandoorn18PYT52tree17c127cbe7d8db332aaf4627761907fde9afdd0etargetblank17c127ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/amgvandoorn/18_PYT52/tree/0ff27dc135b99da6c7691f4ac33d235745898f8b" target="_blank">0ff27dc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/amgvandoorn/18_PYT52/tree/17c127cbe7d8db332aaf4627761907fde9afdd0e" target="_blank">17c127c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rapp.history
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/Radar_new_cache/
+    Ignored:    data/.DS_Store
+
 Untracked files:
+    Untracked:  Icon
     Untracked:  analysis/200325_Random_forest.Rmd
+    Untracked:  analysis/Radar_new1.Rmd
     Untracked:  analysis/WorkflowR.Rmd
+    Untracked:  analysis/repair_wd.Rmd
     Untracked:  data/18.CASS.PYT.52.IB_Harvest_Aerial.csv
     Untracked:  data/CASS_SelectedClones_HISTORICALPHENODATA.xlsx
+    Untracked:  data/average_shape.csv
+    Untracked:  data/average_shape.xls
+    Untracked:  data/phenotype_Branching_data.csv
+    Untracked:  data/phenotype_data.xls
+    Untracked:  output/bh_sh_plot.png
+    Untracked:  output/clus_arch?newfile.png
+    Untracked:  output/clus_roots.png
 
 Unstaged changes:
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/index.Rmd
-    Modified:   analysis/licence.Rmd
+    Modified:   analysis/200324_RADAR_select_clones.Rmd
+    Deleted:    analysis/licence.Rmd
 
 </code></pre>
 <p>
@@ -572,6 +590,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/amgvandoorn/18_PYT52/eebfe23611262111b2bdda6bf32e37a98c5149d0/docs/200323_Model_data.html" target="_blank">eebfe23</a>
+</td>
+<td>
+amgvandoorn
+</td>
+<td>
+2020-03-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -637,34 +672,15 @@ H_A_Data &lt;- read_delim(&quot;data/18.CASS.PYT.52.IB_Harvest_Aerial.csv&quot;,
      &quot;;&quot;, escape_double = FALSE, trim_ws = TRUE, 
      skip = 1)
 head(H_A_Data)</code></pre>
-<pre><code># A tibble: 6 x 98
-  trial year_harvest location trial_type plot_name accession_name plot_number
-  &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;                &lt;dbl&gt;
-1 18.C…         2019 Ibadan   PYT        2019-18.… IITA-TMS-IBA0…        1001
-2 18.C…         2019 Ibadan   PYT        2019-18.… IITA-TMS-IBA0…        1002
-3 18.C…         2019 Ibadan   PYT        2019-18.… IITA-TMS-IBA0…        1003
-4 18.C…         2019 Ibadan   PYT        2019-18.… IITA-TMS-IBA0…        1004
-5 18.C…         2019 Ibadan   PYT        2019-18.… IITA-TMS-IBA0…        1005
-6 18.C…         2019 Ibadan   PYT        2019-18.… IITA-TMS-IBA0…        1006
-# … with 91 more variables: plot_number_1 &lt;dbl&gt;, block_number &lt;dbl&gt;,
-#   is_a_control &lt;dbl&gt;, rep_number &lt;dbl&gt;, row_number &lt;dbl&gt;, col_number &lt;dbl&gt;,
-#   xmin &lt;dbl&gt;, xmax &lt;dbl&gt;, ymin &lt;dbl&gt;, ymax &lt;dbl&gt;, sprout &lt;chr&gt;,
-#   sprtct1 &lt;dbl&gt;, vigor &lt;dbl&gt;, cmd1s &lt;dbl&gt;, cmd1i &lt;chr&gt;, sprtct3 &lt;dbl&gt;,
-#   cmd3s &lt;dbl&gt;, cmd3i &lt;chr&gt;, cbb3s &lt;dbl&gt;, cbb3i &lt;chr&gt;, pubeseverity3 &lt;dbl&gt;,
-#   APICOL3 &lt;dbl&gt;, petcol3 &lt;dbl&gt;, LCOL3 &lt;dbl&gt;, lfshp3 &lt;dbl&gt;, nohav &lt;dbl&gt;,
-#   rtno &lt;dbl&gt;, rtrot &lt;dbl&gt;, shtwt &lt;dbl&gt;, rtwt &lt;dbl&gt;, rtsz &lt;dbl&gt;, rtshp &lt;dbl&gt;,
-#   rtoutcol &lt;dbl&gt;, rtinncol &lt;dbl&gt;, plpcol &lt;dbl&gt;, tc &lt;dbl&gt;, nklgt &lt;dbl&gt;,
-#   easepl &lt;dbl&gt;, DM_NIRS &lt;dbl&gt;, DM &lt;dbl&gt;, STARCH &lt;dbl&gt;, STARCH_RESIDUE &lt;dbl&gt;,
-#   L &lt;dbl&gt;, A &lt;chr&gt;, B &lt;dbl&gt;, mealiness &lt;dbl&gt;, pdtas &lt;chr&gt;, height.1 &lt;chr&gt;,
-#   a.1 &lt;chr&gt;, b.1 &lt;dbl&gt;, vol.1 &lt;chr&gt;, surf.1 &lt;dbl&gt;, aber.1 &lt;dbl&gt;,
-#   length.1 &lt;dbl&gt;, height.2 &lt;chr&gt;, a.2 &lt;chr&gt;, b.2 &lt;dbl&gt;, vol.2 &lt;chr&gt;,
-#   surf.2 &lt;dbl&gt;, aber.2 &lt;chr&gt;, length.2 &lt;dbl&gt;, height.3 &lt;chr&gt;, a.3 &lt;chr&gt;,
-#   b.3 &lt;dbl&gt;, vol.3 &lt;dbl&gt;, surf.3 &lt;dbl&gt;, aber.3 &lt;chr&gt;, length.3 &lt;dbl&gt;,
-#   height.4 &lt;chr&gt;, a.4 &lt;chr&gt;, b.4 &lt;chr&gt;, vol.4 &lt;chr&gt;, surf.4 &lt;dbl&gt;,
-#   aber.4 &lt;chr&gt;, length.4 &lt;dbl&gt;, height.5 &lt;chr&gt;, a.5 &lt;chr&gt;, b.5 &lt;dbl&gt;,
-#   vol.5 &lt;chr&gt;, surf.5 &lt;dbl&gt;, aber.5 &lt;chr&gt;, length.5 &lt;dbl&gt;, height.6 &lt;dbl&gt;,
-#   a.6 &lt;chr&gt;, b.6 &lt;dbl&gt;, vol.6 &lt;dbl&gt;, surf.6 &lt;dbl&gt;, aber.6 &lt;chr&gt;,
-#   length.6 &lt;dbl&gt;, R &lt;dbl&gt;, C &lt;dbl&gt;</code></pre>
+<pre><code># A tibble: 6 x 1
+  `trial,year_harvest,location,trial_type,plot_name,accession_name,plot_number,…
+  &lt;chr&gt;                                                                         
+1 18.CASS.PYT.52.IB,2019,Ibadan,PYT,2019-18.CASS.PYT.52.IB-rep1-IITA-TMS-IBA090…
+2 18.CASS.PYT.52.IB,2019,Ibadan,PYT,2019-18.CASS.PYT.52.IB-rep1-IITA-TMS-IBA083…
+3 18.CASS.PYT.52.IB,2019,Ibadan,PYT,2019-18.CASS.PYT.52.IB-rep1-IITA-TMS-IBA090…
+4 18.CASS.PYT.52.IB,2019,Ibadan,PYT,2019-18.CASS.PYT.52.IB-rep2-IITA-TMS-IBA090…
+5 18.CASS.PYT.52.IB,2019,Ibadan,PYT,2019-18.CASS.PYT.52.IB-rep2-IITA-TMS-IBA083…
+6 18.CASS.PYT.52.IB,2019,Ibadan,PYT,2019-18.CASS.PYT.52.IB-rep2-TMS13F1343P0022…</code></pre>
 </div>
 <div id="clusters" class="section level2">
 <h2>Clusters</h2>
